@@ -30,7 +30,6 @@ const BodyType = () => {
 
     const bustWaistDiff = bust - waist;
     const hipWaistDiff = hips - waist;
-    const shoulderHipDiff = Math.abs(shoulder - hips);
 
     if (Math.abs(bust - hips) <= 5 && bustWaistDiff >= 20) {
       bodyType = "Hourglass";
