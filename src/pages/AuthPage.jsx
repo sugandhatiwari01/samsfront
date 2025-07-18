@@ -95,60 +95,6 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-      <div
-        className="hidden md:block bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://i.pinimg.com/736x/be/f1/8f/bef18f0e52d908b6086e699b182d1d1d.jpg')",
-        }}
-      ></div>
-      <div className="flex items-center justify-center bg-gradient-to-br from-[#fdf6e3] to-[#d2b48c] p-6">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-          {/* Your form JSX remains unchanged */}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ✅ HomePage.jsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../index.css";
-
-export default function HomePage() {
-  const navigate = useNavigate();
-  const [items, setItems] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const user = localStorage.getItem("userId");
-    if (!user) {
-      navigate("/auth", { replace: true });
-      return;
-    }
-    setIsLoggedIn(true);
-
-    fetch(`https://api.unsplash.com/search/photos?query=clothes&per_page=18&orientation=squarish&client_id=dyE9BMK6zBpUhJIEAN8YP40abAnj5IqWePcOJa_mHVM`)
-      .then((res) => res.json())
-      .then((data) => {
-        const fetchedImages = data.results.map((img, idx) => ({
-          src: img.urls.small,
-          alt: `item-${idx}`,
-        }));
-        setItems(fetchedImages);
-      })
-      .catch((err) => console.error("Error fetching images:", err));
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("userId");
-    setIsLoggedIn(false);
-    navigate("/auth");
-  };
-
-  return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Left Side */}
       <div
         className="hidden md:block bg-cover bg-center"
