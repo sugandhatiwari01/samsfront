@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { User, Heart, ShoppingCart, Search, Menu } from 'lucide-react'; // ✅ correct
 import {Link} from "react-router-dom"; 
 import Home from "./Home";
 
