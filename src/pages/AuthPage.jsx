@@ -1,36 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser, loginUser, resetPassword } from "../utils/api";
-import { useEffect } from "react";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showForgotForm, setShowForgotForm] = useState(false);
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     securityQuestion: "",
-    securityAnswer: ""
+    securityAnswer: "",
   });
-
   const [newPassword, setNewPassword] = useState("");
-
   const navigate = useNavigate();
 
-  const toggleForm = () => setIsLogin(!isLogin);
+  useEffect(() => {
+    const user = localStorage.getItem("userId");
+    if (user) navigate("/", { replace: true });
+  }, [navigate]);
+
+  const toggleForm = () => setIsLogin((prev) => !prev);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
-useEffect(() => {
-  const user = localStorage.getItem("userId");
-  if (user) navigate("/", { replace: true });
-}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +35,7 @@ useEffect(() => {
       if (isLogin) {
         const res = await loginUser({
           email: formData.email,
-          password: formData.password
+          password: formData.password,
         });
         if (res.token) {
           localStorage.setItem("token", res.token);
@@ -53,7 +50,7 @@ useEffect(() => {
           email: formData.email,
           password: formData.password,
           securityQuestion: formData.securityQuestion,
-          securityAnswer: formData.securityAnswer
+          securityAnswer: formData.securityAnswer,
         });
         if (res.message) {
           alert("Registration successful! Please log in.");
@@ -74,9 +71,8 @@ useEffect(() => {
       const res = await resetPassword({
         email: formData.email,
         answer: formData.securityAnswer,
-        newPassword
+        newPassword,
       });
-
       if (res.message) {
         alert("Password reset successfully!");
         setShowForgotForm(false);
@@ -85,7 +81,7 @@ useEffect(() => {
           email: "",
           password: "",
           securityQuestion: "",
-          securityAnswer: ""
+          securityAnswer: "",
         });
         setNewPassword("");
       } else {
@@ -95,6 +91,60 @@ useEffect(() => {
       console.error(err);
       alert("Something went wrong.");
     }
+  };
+
+  return (
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      <div
+        className="hidden md:block bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://i.pinimg.com/736x/be/f1/8f/bef18f0e52d908b6086e699b182d1d1d.jpg')",
+        }}
+      ></div>
+      <div className="flex items-center justify-center bg-gradient-to-br from-[#fdf6e3] to-[#d2b48c] p-6">
+        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+          {/* Your form JSX remains unchanged */}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ✅ HomePage.jsx
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../index.css";
+
+export default function HomePage() {
+  const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem("userId");
+    if (!user) {
+      navigate("/auth", { replace: true });
+      return;
+    }
+    setIsLoggedIn(true);
+
+    fetch(`https://api.unsplash.com/search/photos?query=clothes&per_page=18&orientation=squarish&client_id=dyE9BMK6zBpUhJIEAN8YP40abAnj5IqWePcOJa_mHVM`)
+      .then((res) => res.json())
+      .then((data) => {
+        const fetchedImages = data.results.map((img, idx) => ({
+          src: img.urls.small,
+          alt: `item-${idx}`,
+        }));
+        setItems(fetchedImages);
+      })
+      .catch((err) => console.error("Error fetching images:", err));
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    setIsLoggedIn(false);
+    navigate("/auth");
   };
 
   return (
