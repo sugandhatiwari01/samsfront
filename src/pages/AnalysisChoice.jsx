@@ -33,7 +33,7 @@ const AnalysisChoice = () => {
             className="relative group overflow-hidden rounded-2xl shadow-lg transform hover:scale-105 transition duration-500"
           >
             <img
-              src="public/images/bodyimg.jpg"
+              src="/images/bodyimg.jpg"
               alt="Body Shape Analysis"
               className="w-full h-[500px] object-cover"
             />
